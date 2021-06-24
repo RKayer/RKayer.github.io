@@ -443,7 +443,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2021-06-03
+                    2021-06-24
                 </div>
                 
 
@@ -464,82 +464,164 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p> @[TOC](Blinker + ESP8266 +小爱同学实现语音点灯</p>
-<h1 id="Blinker"><a href="#Blinker" class="headerlink" title="Blinker"></a>Blinker</h1><p>手机下载点灯APP，添加一个独立设备（使用阿里云），然后添加示例，最后找到与该独立设备连接的密钥。</p>
-<p>Arduino通过添加blinker库，新建示例代码，blinker_WIFI/Hello_WIFI,代码示例如下，因为是WiFi热点连接ESP8266,所以需要设置用户名和密码。</p>
+                <h1 id="复读机"><a href="#复读机" class="headerlink" title="复读机"></a>复读机</h1><p><em>网络编程</em></p>
+<p><strong>Server端</strong></p>
+<p>当收到客户端发送的消息“xxx”(英文字符串)，自动回复“I get xxx”</p>
+<p>监听在任意端口</p>
+<p><strong>Client端</strong></p>
+<p>可以使用任意网络助手（手机、PC、自己的程序）</p>
 <blockquote>
-<p>char auth[] = “3bbc6946c235”; // blinker app提供的密钥<br>char ssid[] = “zhuguang”;// wifi 名字<br>char pswd[] = “123456789”;// wifi 密码</p>
+<p>void init_dll(); //加载动态链接库</p>
+<p>void close_dll(); //释放动态链接库</p>
+<p>void close_socket(SOCKET socket); //关闭socket</p>
+<p>SOCKET new_client(char *domain, int port); //创建一个客户端</p>
+<p>SOCKET new_server(int port); //创建一个服务端</p>
+<p>void send_msg(SOCKET socket, char *msg); //往Socket中写入数据</p>
+<p>void recv_msg(SOCKET socket, char *buf); //从Socket中读取数据</p>
 </blockquote>
-<pre class=" language-c"><code class="language-c"><span class="token macro property">#<span class="token directive keyword">define</span> BLINKER_WIFI  </span>
-<span class="token macro property">#<span class="token directive keyword">define</span> BLINKER_MIOT_LIGHT </span><span class="token comment" spellcheck="true">//支持小爱开关LED</span>
-<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;Blinker.h></span></span>
-
-<span class="token macro property">#<span class="token directive keyword">define</span> LED   2  </span><span class="token comment" spellcheck="true">// 板子上的灯 </span>
-<span class="token keyword">char</span> auth<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"3bbc6946c235"</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// blinker app提供的秘钥</span>
-<span class="token keyword">char</span> ssid<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"zhuguang"</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">// wifi 名字</span>
-<span class="token keyword">char</span> pswd<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">"123456789"</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">// wifi 密码</span>
-
-bool wsState<span class="token punctuation">;</span>
-uint8_t wsMode <span class="token operator">=</span> BLINKER_CMD_MIOT_DAY<span class="token punctuation">;</span>
-
-
-<span class="token comment" spellcheck="true">// 新建组件对象</span>
-BlinkerButton <span class="token function">Button1</span><span class="token punctuation">(</span><span class="token string">"btn-abc"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//注意：要和APP组件'数据键名'一致</span>
-<span class="token comment" spellcheck="true">//在blinker app上每个功能块都会对应一个组件名字（自己编辑设定）</span>
-
-<span class="token comment" spellcheck="true">// 按下BlinkerAPP按键即会执行该函数</span>
-<span class="token keyword">void</span> <span class="token function">button1_callback</span><span class="token punctuation">(</span><span class="token keyword">const</span> String <span class="token operator">&amp;</span> state<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
- <span class="token function">BLINKER_LOG</span><span class="token punctuation">(</span><span class="token string">"get button state: "</span><span class="token punctuation">,</span> state<span class="token punctuation">)</span><span class="token punctuation">;</span>
- <span class="token comment" spellcheck="true">//按下按键则会在blinker上显示'get button state: tap'</span>
-
- <span class="token function">digitalWrite</span><span class="token punctuation">(</span>LED<span class="token punctuation">,</span> <span class="token operator">!</span><span class="token function">digitalRead</span><span class="token punctuation">(</span>LED<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//每按一次LED电平反转，实现LED的亮灭</span>
- Blinker<span class="token punctuation">.</span><span class="token function">vibrate</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
- 
-<span class="token comment" spellcheck="true">/*以下是语音控制
-小爱电源类操作的回调函数:
-当小爱同学向设备发起控制, 设备端需要有对应控制处理函数
+<pre class=" language-c"><code class="language-c"><span class="token comment" spellcheck="true">/*复读机
+*网络编程语言
+*Author:祝光
+*Data：2021/1/30
 */</span>
-<span class="token keyword">void</span> <span class="token function">miotPowerState</span><span class="token punctuation">(</span><span class="token keyword">const</span> String <span class="token operator">&amp;</span> state<span class="token punctuation">)</span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h></span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">"E:\visual desk\单片机leaning\物联网\程序\common\yuyang_net.h"</span>   </span><span class="token comment" spellcheck="true">//包含.h文件的函数封装库</span>
+
+<span class="token comment" spellcheck="true">//主函数</span>
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-    <span class="token function">BLINKER_LOG</span><span class="token punctuation">(</span><span class="token string">"need set power state: "</span><span class="token punctuation">,</span> state<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">init_dll</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>    <span class="token comment" spellcheck="true">//加载动态链接库</span>
+    SOCKET server <span class="token operator">=</span> <span class="token function">new_server</span><span class="token punctuation">(</span><span class="token number">8888</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//定义一个SOCKET型变量，创建一个服务端</span>
+    <span class="token keyword">char</span> buf<span class="token punctuation">[</span><span class="token number">1024</span><span class="token punctuation">]</span><span class="token punctuation">;</span>   
+    <span class="token keyword">char</span> send<span class="token punctuation">[</span><span class="token number">1024</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">while</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>i <span class="token operator">&lt;</span><span class="token number">1024</span><span class="token punctuation">;</span>i<span class="token operator">++</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+            buf<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'\0'</span><span class="token punctuation">;</span>
+            send<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'\0'</span><span class="token punctuation">;</span>
 
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> BLINKER_CMD_ON<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-        <span class="token function">digitalWrite</span><span class="token punctuation">(</span>LED_BUILTIN<span class="token punctuation">,</span> LOW<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//LED灯亮</span>
+        <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+        <span class="token function">recv_msg</span><span class="token punctuation">(</span>server<span class="token punctuation">,</span>buf<span class="token punctuation">)</span><span class="token punctuation">;</span>     <span class="token comment" spellcheck="true">//接收数据</span>
+        <span class="token function">sprintf</span><span class="token punctuation">(</span>send<span class="token punctuation">,</span><span class="token string">"I get %s\r\n"</span><span class="token punctuation">,</span>buf<span class="token punctuation">)</span><span class="token punctuation">;</span>   <span class="token comment" spellcheck="true">//字符拼接</span>
+        <span class="token function">send_msg</span><span class="token punctuation">(</span>server<span class="token punctuation">,</span>send<span class="token punctuation">)</span><span class="token punctuation">;</span>     <span class="token comment" spellcheck="true">//发送数据</span>
 
-        BlinkerMIOT<span class="token punctuation">.</span><span class="token function">powerState</span><span class="token punctuation">(</span><span class="token string">"on"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        BlinkerMIOT<span class="token punctuation">.</span><span class="token function">print</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> BLINKER_CMD_OFF<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-        <span class="token function">digitalWrite</span><span class="token punctuation">(</span>LED_BUILTIN<span class="token punctuation">,</span> HIGH<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//LED灯灭</span>
-
-        BlinkerMIOT<span class="token punctuation">.</span><span class="token function">powerState</span><span class="token punctuation">(</span><span class="token string">"off"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        BlinkerMIOT<span class="token punctuation">.</span><span class="token function">print</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-
-
-
-<span class="token keyword">void</span> <span class="token function">setup</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
- <span class="token comment" spellcheck="true">// 初始化串口，并开启调试信息，调试用可以删除</span>
- Serial<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token number">115200</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 
- BLINKER_DEBUG<span class="token punctuation">.</span><span class="token function">stream</span><span class="token punctuation">(</span>Serial<span class="token punctuation">)</span><span class="token punctuation">;</span>
- <span class="token comment" spellcheck="true">// 初始化IO</span>
- <span class="token function">pinMode</span><span class="token punctuation">(</span>LED<span class="token punctuation">,</span> OUTPUT<span class="token punctuation">)</span><span class="token punctuation">;</span> 
- <span class="token function">digitalWrite</span><span class="token punctuation">(</span>LED<span class="token punctuation">,</span> HIGH<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// 初始化 led 高电平 ，则灯熄灭状态</span>
- 
- <span class="token comment" spellcheck="true">// 初始化blinker</span>
- Blinker<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span>auth<span class="token punctuation">,</span> ssid<span class="token punctuation">,</span> pswd<span class="token punctuation">)</span><span class="token punctuation">;</span>
- Button1<span class="token punctuation">.</span><span class="token function">attach</span><span class="token punctuation">(</span>button1_callback<span class="token punctuation">)</span><span class="token punctuation">;</span>
- 
- <span class="token comment" spellcheck="true">//小爱同学务必在回调函数中反馈该控制状态 </span>
- BlinkerMIOT<span class="token punctuation">.</span><span class="token function">attachPowerState</span><span class="token punctuation">(</span>miotPowerState<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//注册回调函数</span>
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-<span class="token keyword">void</span> <span class="token function">loop</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
- Blinker<span class="token punctuation">.</span><span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
 <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
 </code></pre>
-<p>打开米家APP添加点灯科技并绑定blinker的账号，同步blinker上的独立设备，然后再小爱同学app里面就可以找到我们的独立设备，开始训练模式学习语音，成功后就可以语音控制。</p>
+<h1 id="加法机器人"><a href="#加法机器人" class="headerlink" title="加法机器人"></a>加法机器人</h1><p><strong>Server端</strong></p>
+<p>读取用户输入的数字，自动做加法并返回当前结果，一直做累加。</p>
+<p>读取用户输入’#’，则清空当前数据。</p>
+<p>监听在任意端口</p>
+<p><strong>Client端</strong></p>
+<p>可以使用任意网络助手（手机、PC、自己的程序）</p>
+<pre class=" language-C"><code class="language-C">#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "../../../单片机leaning/物联网/程序/common/yuyang_net.h"
+
+int main()
+&#123;
+    init_dll();
+    SOCKET server = new_server(8889);
+    char buf[1024];
+    char send[1024];
+    int i = 0;
+    while(1)&#123;
+        for(int j = 0;j<1024;j++)&#123;
+            buf[j] = '\0';      //每次接收数据后将字符数组清空
+            send[j] = '\0';
+        &#125;
+        recv_msg(server,buf);
+        if( strcmp(buf,"#") == 0 || strcmp(buf,"#\r") == 0 || strcmp(buf,"#\r\n") == 0)&#123;
+            i = 0;
+            continue; 
+        &#125;
+        i += (int)(atoi(buf));   //atoi函数将字符类型转为整型
+        sprintf(send,"%d\r\n",i);     //整型转为字符型
+        send_msg(server,send);
+    &#125;
+
+    return 0;
+&#125;
+</code></pre>
+<h1 id="我爱算数"><a href="#我爱算数" class="headerlink" title="我爱算数"></a>我爱算数</h1><p><strong>Server端</strong></p>
+<p>当有客户端连接时，自动生成2个数(x1 x2)，以及运算方式（加减乘），返回给客户端。</p>
+<p>然后等待客户端返回答案。</p>
+<p>判断客户端返回答案是否正确，返回Y or N，并再次出题。</p>
+<p><strong>Client端</strong></p>
+<p>获取到服务端的题目，用户输入答案，再次做题</p>
+<pre class=" language-C"><code class="language-C">/*
+*Author:祝光
+*Data：2021/1/30
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "common/yuyang_net.h"
+
+#define type_+ 0
+#define type_- 1
+#define type_* 2
+
+
+//主程序
+int main()
+&#123;
+    init_dll();
+    SOCKET server = new_server(8890);   //创建新的服务端（端口号）
+
+    char send[1024];
+    char buf[1024];
+    int i = 0;
+    while(1)&#123;
+        for(int j = 0;j<1024;j++)&#123;
+            send[j] = '\0';
+            buf[j] = '\0';
+        &#125;
+        time_t tm = time(NULL);//得到系统时间
+        srand((unsigned int)tm);//随机种⼦只需要设置⼀次即可
+        int num1 = rand() % 100;    //将生成的随机数保存取模，控制在100以内
+        int num2 = rand() % 100;
+        int num3 = rand() % 3;     //将生成的数字的三种情况分别表示三种运算方式
+        int res;    //结果
+        
+        switch(num3)&#123;
+        case type_+:
+            sprintf(send,"%d + %d = \r\n",num1,num2);
+            res = num1 + num2;
+            send_msg(server,send);
+            break;
+        case type_-:
+            sprintf(send,"%d - %d = \r\n",num1,num2);
+            res = num1 - num2;
+            send_msg(server,send);
+            break;
+        case type_*:
+            sprintf(send,"%d * %d = \r\n",num1,num2);
+            res = num1 * num2;
+            send_msg(server,send);
+            break;
+        &#125;
+        recv_msg(server,buf);
+        int temp = atoi(buf);
+        if(temp == res)&#123;
+            send_msg(server,"You Are Right!");
+
+        &#125;else&#123;
+            send_msg(server,"You Are Wrong!");
+        &#125;
+    &#125;
+    return 0;
+&#125;
+</code></pre>
+<h1 id="C语言随机数"><a href="#C语言随机数" class="headerlink" title="C语言随机数"></a>C语言随机数</h1><p><em><strong>time     srand</strong></em></p>
+<pre class=" language-c"><code class="language-c"><span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;time.h></span></span>
+time_t tm <span class="token operator">=</span> <span class="token function">time</span><span class="token punctuation">(</span><span class="token constant">NULL</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//得到系统时间</span>
+<span class="token function">srand</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">unsigned</span> <span class="token keyword">int</span><span class="token punctuation">)</span>tm<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//随机种⼦只需要设置⼀次即可</span>
+<span class="token keyword">int</span> num <span class="token operator">=</span> <span class="token function">rand</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">%</span> <span class="token number">100</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//获取随机数并将其控制在100以内</span>
+</code></pre>
 
                 
             </div>
@@ -566,7 +648,7 @@ BlinkerButton <span class="token function">Button1</span><span class="token punc
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://rkayer.github.io/2021/06/03/Blinker+esp8266/">https://rkayer.github.io/2021/06/03/Blinker+esp8266/</a>
+                    <a href="https://rkayer.github.io/2021/06/24/SOCKET%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B1/">https://rkayer.github.io/2021/06/24/SOCKET%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B1/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -644,9 +726,48 @@ BlinkerButton <span class="token function">Button1</span><span class="token punc
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2021/06/24/SOCKET%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B1/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
+                        
+                        <span class="card-title"></span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-06-24
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            RKayer
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
             <div class="card">
                 <a href="/2021/06/24/python/">
                     <div class="card-image">
@@ -664,45 +785,8 @@ BlinkerButton <span class="token function">Button1</span><span class="token punc
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-06-24
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            RKayer
-                            
-                        </span>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2021/06/03/IIC,SPI,UART,%E5%8D%95%E6%80%BB%E7%BA%BF/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
-                        
-                        <span class="card-title"></span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-06-03
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-06-24
                             </span>
                         <span class="publish-author">
                             
