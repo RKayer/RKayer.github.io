@@ -466,16 +466,16 @@
             <div id="articleContent">
                 <h1 id="解决hexo-d出现超时的问题"><a href="#解决hexo-d出现超时的问题" class="headerlink" title="解决hexo -d出现超时的问题"></a>解决hexo -d出现超时的问题</h1><p>Author : RKayer<br>Date   ：2021/6/24</p>
 <p><strong>问题</strong></p>
-<pre class=" language-C"><code class="language-C">fatal: unable to access 'https://github.com/RKayer/RKayer.github.io/': Failed to connect to github.com port 443: Timed out
-FATAL &#123;
-  err: Error: Spawn failed
-      at ChildProcess.<anonymous> (D:\blog\node_modules\hexo-util\lib\spawn.js:51:21)
-      at ChildProcess.emit (events.js:315:20)
-      at ChildProcess.cp.emit (D:\blog\node_modules\cross-spawn\lib\enoent.js:34:29)
-      at Process.ChildProcess._handle.onexit (internal/child_process.js:277:12) &#123;
-    code: 128
-  &#125;
-&#125; Something's wrong. Maybe you can find the solution here: %s https://hexo.io/docs/troubleshooting.html
+<pre class=" language-python"><code class="language-python">fatal<span class="token punctuation">:</span> unable to access <span class="token string">'https://github.com/RKayer/RKayer.github.io/'</span><span class="token punctuation">:</span> Failed to connect to github<span class="token punctuation">.</span>com port <span class="token number">443</span><span class="token punctuation">:</span> Timed out
+FATAL <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+  err<span class="token punctuation">:</span> Error<span class="token punctuation">:</span> Spawn failed
+      at ChildProcess<span class="token punctuation">.</span><span class="token operator">&lt;</span>anonymous<span class="token operator">></span> <span class="token punctuation">(</span>D<span class="token punctuation">:</span>\blog\node_modules\hexo<span class="token operator">-</span>util\lib\spawn<span class="token punctuation">.</span>js<span class="token punctuation">:</span><span class="token number">51</span><span class="token punctuation">:</span><span class="token number">21</span><span class="token punctuation">)</span>
+      at ChildProcess<span class="token punctuation">.</span>emit <span class="token punctuation">(</span>events<span class="token punctuation">.</span>js<span class="token punctuation">:</span><span class="token number">315</span><span class="token punctuation">:</span><span class="token number">20</span><span class="token punctuation">)</span>
+      at ChildProcess<span class="token punctuation">.</span>cp<span class="token punctuation">.</span>emit <span class="token punctuation">(</span>D<span class="token punctuation">:</span>\blog\node_modules\cross<span class="token operator">-</span>spawn\lib\enoent<span class="token punctuation">.</span>js<span class="token punctuation">:</span><span class="token number">34</span><span class="token punctuation">:</span><span class="token number">29</span><span class="token punctuation">)</span>
+      at Process<span class="token punctuation">.</span>ChildProcess<span class="token punctuation">.</span>_handle<span class="token punctuation">.</span>onexit <span class="token punctuation">(</span>internal<span class="token operator">/</span>child_process<span class="token punctuation">.</span>js<span class="token punctuation">:</span><span class="token number">277</span><span class="token punctuation">:</span><span class="token number">12</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+    code<span class="token punctuation">:</span> <span class="token number">128</span>
+  <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125; Something's wrong. Maybe you can find the solution here: %s https://hexo.io/docs/troubleshooting.html</span>
 </code></pre>
 <p>网络端口进入超时。原因是申请了代理VPN出现的问题。</p>
 <p><strong>解决方法：</strong></p>
@@ -609,12 +609,11 @@ FATAL &#123;
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2021/06/24/git_hexo_erro/">
+                <a href="/2021/08/19/STM32/">
                     <div class="card-image">
                         
                         
@@ -630,9 +629,9 @@ FATAL &#123;
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-06-24
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2021-08-19
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -641,7 +640,6 @@ FATAL &#123;
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
